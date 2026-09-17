@@ -1,0 +1,15 @@
+work/
+*.raw
+*.psf
+*.log
+*.ahdlSimDB/
+*.spectre.out
+simulation/
+psf/
+netlist/
+CDS.log
+cds.lib
+lib.defs
+*.oa.cdslck
+*.swp
+*~
