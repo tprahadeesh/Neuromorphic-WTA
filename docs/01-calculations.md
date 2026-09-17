@@ -2,15 +2,15 @@
 
 **Design:** GPDK45 time-domain winner-take-all network
 
-**Revision:** 1.0 - 2026-09-17
+**Revision:** 1.1 - 2026-09-17
 
-**Related:** [Architecture](02-architecture.md) | [Decisions](03-design-decisions.md) | [Final design](04-final-design.md)
+**Related:** [Architecture](02-architecture.md) | [Decisions](03-design-decisions.md) | [Final design](04-final-design.md) | [Circuit walkthrough](05-circuit-walkthrough.md)
 
 ## 1. Source parameters
 
 This is the single source of truth. Change this table before changing a schematic value.
 
-| Symbol | Meaning | Revision 1.0 value |
+| Symbol | Meaning | Revision 1.1 value |
 |---|---|---:|
 | `N` | Signal neurons | 4 |
 | `NTO` | Timeout neurons | 1 |
@@ -55,7 +55,7 @@ Balanced strength requires:
 Wp/Wn = (mu_n*Cox)/(mu_p*Cox) = 250/100 = 2.5
 ```
 
-Choose `MN1 = 0.36/0.09 um` and `MP1 = 0.90/0.09 um`:
+Choose `MN_AMP1 = 0.36/0.09 um` and `MP_AMP1 = 0.90/0.09 um`:
 
 ```text
 beta_n = 250*(0.36/0.09) = 1000 uA/V^2
@@ -65,7 +65,7 @@ VTRIP = (VDD + VTH,N - |VTH,P|)/2
       = 0.490 V
 ```
 
-The second inverter is stronger: `MN2 = 0.72/0.06 um`, `MP2 = 1.80/0.06 um`. Its width ratio is also 2.5. A Spectre DC sweep must place the first-inverter trip point between 0.45 V and 0.55 V at TT/27 degC.
+The second inverter is stronger: `MN_AMP2 = 0.72/0.06 um`, `MP_AMP2 = 1.80/0.06 um`. Its width ratio is also 2.5. A Spectre DC sweep must place the first-inverter trip point between 0.45 V and 0.55 V at TT/27 degC.
 
 ## 3. Integration capacitance
 
@@ -142,7 +142,7 @@ With a 2.5x PVT/mismatch margin:
 TRESET,MIN = 2.5*61.7 ns = 154 ns
 ```
 
-For current-limiter `M_LEN = 0.18/0.18 um`:
+For current-limiter `MN_RST_LIM = 0.18/0.18 um`:
 
 ```text
 VOV,N = sqrt(2*IDIS/(mu_n*Cox*(W/L)))
@@ -171,7 +171,7 @@ TRESET = TSPIKE + TREQ,HOLD
 
 This exceeds the required 154 ns. Use 70 fF explicitly and budget 10 fF for request-node parasitics.
 
-For `MP_RL = 0.18/0.36 um`, `W/L = 0.5`:
+For `MP_REQ_PU = 0.18/0.36 um`, `W/L = 0.5`:
 
 ```text
 VOV,P = sqrt(2*0.25 uA/(100 uA/V^2*0.5)) = 0.100 V
@@ -179,7 +179,7 @@ VSG,P = |VTH,P| + VOV,P = 0.440 V
 VBP_RESETLEN = VDD - VSG,P = 0.560 V
 ```
 
-Start with an ideal 250 nA source, then use `MP_RL` and calibrate its gate bias over PVT.
+Start with an ideal 250 nA source, then use `MP_REQ_PU` and calibrate its gate bias over PVT.
 
 ## 8. WTA discrimination
 
@@ -203,7 +203,7 @@ Mismatch will dominate this ideal limit. The practical target is at least 99% co
 
 ## 9. Reset driver and fanout
 
-Use `MN_RI = 1.44/0.06 um` and `MP_RI = 3.60/0.06 um`. For five reset gates:
+Use `MN_RST_INV = 1.44/0.06 um` and `MP_RST_INV = 3.60/0.06 um`. For five reset gates:
 
 ```text
 Agate,total = 5*(0.60 um*0.06 um) = 0.180 um^2
@@ -237,4 +237,5 @@ Measure final power over at least 20 cycles with all neurons, biases, reset logi
 
 ## Revision notes
 
+- **1.1 - 2026-09-17:** Adopted the functional transistor naming convention; numerical assumptions are unchanged.
 - **1.0 - 2026-09-17:** Initial calculation set. Spectre and extracted-view calibration pending.

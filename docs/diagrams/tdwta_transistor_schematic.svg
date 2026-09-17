@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="820" viewBox="0 0 1500 820" role="img" aria-labelledby="title desc">
+  <title id="title">One time-domain WTA neuron with named devices</title>
+  <desc id="desc">Clean functional schematic showing the integrator, two CMOS inverters, feedback capacitor, reset request transistor, and soma reset stack.</desc>
+  <defs>
+    <style>
+      .bg{fill:#fff}.stage{fill:#eef6ff;stroke:#3979b8;stroke-width:3}.resetbox{fill:#f6f2ff;stroke:#7057a8;stroke-width:3}.requestbox{fill:#fff4e8;stroke:#c25a1f;stroke-width:3}
+      .wire{fill:none;stroke:#25364a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.signal{stroke:#0d8268}.reset{stroke:#2469b2}.request{stroke:#c2511d}.bias{stroke:#7450a4}.node{fill:#25364a}
+      .title{font:bold 42px 'DejaVu Sans',Arial,sans-serif;fill:#101828}.subtitle{font:23px 'DejaVu Sans',Arial,sans-serif;fill:#475467}.heading{font:bold 25px 'DejaVu Sans',Arial,sans-serif;fill:#152238}.label{font:bold 22px 'DejaVu Sans Mono',monospace;fill:#172033}.text{font:20px 'DejaVu Sans',Arial,sans-serif;fill:#344054}.small{font:17px 'DejaVu Sans',Arial,sans-serif;fill:#475467}
+    </style>
+    <marker id="greenArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12z" fill="#0d8268"/></marker>
+    <marker id="orangeArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12z" fill="#c2511d"/></marker>
+    <marker id="blueArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12z" fill="#2469b2"/></marker>
+  </defs>
+  <rect class="bg" width="1500" height="820"/>
+  <text x="55" y="62" class="title">One repeated neuron: XNEUR&lt;i&gt;</text>
+  <text x="55" y="98" class="subtitle">Seven MOSFETs, two capacitors, and five clearly separated functions</text>
+
+  <text x="55" y="170" class="heading">1  Integrate</text>
+  <line x1="60" y1="245" x2="205" y2="245" class="wire signal" marker-end="url(#greenArrow)"/>
+  <text x="60" y="220" class="label">IIN&lt;i&gt;</text>
+  <circle cx="235" cy="245" r="8" class="node"/>
+  <line x1="205" y1="245" x2="350" y2="245" class="wire signal"/>
+  <text x="185" y="285" class="label">VSOMA&lt;i&gt;</text>
+
+  <line x1="235" y1="245" x2="235" y2="345" class="wire signal"/>
+  <line x1="200" y1="345" x2="270" y2="345" class="wire"/><line x1="200" y1="365" x2="270" y2="365" class="wire"/>
+  <line x1="235" y1="365" x2="235" y2="420" class="wire"/>
+  <line x1="205" y1="420" x2="265" y2="420" class="wire"/><line x1="215" y1="432" x2="255" y2="432" class="wire"/><line x1="226" y1="444" x2="244" y2="444" class="wire"/>
+  <text x="55" y="355" class="label">C_SOMA</text><text x="55" y="383" class="text">200 fF</text>
+
+  <text x="370" y="170" class="heading">2  Detect threshold</text>
+  <rect x="350" y="195" width="285" height="185" rx="15" class="stage"/>
+  <text x="380" y="235" class="heading">CMOS inverter 1</text>
+  <text x="380" y="282" class="label">MP_AMP1</text><text x="535" y="282" class="small">pull-up</text>
+  <text x="380" y="322" class="label">MN_AMP1</text><text x="535" y="322" class="small">pull-down</text>
+  <text x="380" y="357" class="small">Trip target: 0.49 V</text>
+  <line x1="635" y1="245" x2="735" y2="245" class="wire signal" marker-end="url(#greenArrow)"/>
+  <text x="645" y="225" class="label">A1_OUT&lt;i&gt;</text>
+
+  <text x="755" y="170" class="heading">3  Restore spike</text>
+  <rect x="735" y="195" width="285" height="185" rx="15" class="stage"/>
+  <text x="765" y="235" class="heading">CMOS inverter 2</text>
+  <text x="765" y="282" class="label">MP_AMP2</text><text x="920" y="282" class="small">pull-up</text>
+  <text x="765" y="322" class="label">MN_AMP2</text><text x="920" y="322" class="small">pull-down</text>
+  <text x="765" y="357" class="small">Rail-to-rail output</text>
+  <line x1="1020" y1="245" x2="1125" y2="245" class="wire signal" marker-end="url(#greenArrow)"/>
+  <circle cx="1095" cy="245" r="8" class="node"/>
+  <text x="1030" y="220" class="label">VSPIKE&lt;i&gt;</text>
+
+  <path d="M1095 245 V135 H690" class="wire signal"/>
+  <line x1="690" y1="115" x2="690" y2="155" class="wire"/><line x1="670" y1="115" x2="670" y2="155" class="wire"/>
+  <path d="M670 135 H235 V245" class="wire signal"/>
+  <text x="535" y="126" class="label">C_FB = 20 fF</text>
+
+  <text x="1160" y="170" class="heading">4  Request reset</text>
+  <rect x="1140" y="195" width="305" height="185" rx="15" class="requestbox"/>
+  <text x="1175" y="247" class="label">MN_REQ</text>
+  <text x="1175" y="282" class="text">Gate = VSPIKE&lt;i&gt;</text>
+  <text x="1175" y="317" class="text">Drain = VRESET_REQ</text>
+  <text x="1175" y="352" class="small">A spike pulls request low</text>
+  <line x1="1445" y1="285" x2="1480" y2="285" class="wire request" marker-end="url(#orangeArrow)"/>
+  <text x="1255" y="415" class="label">VRESET_REQ</text><text x="1265" y="442" class="small">active low, shared</text>
+
+  <text x="55" y="535" class="heading">5  Discharge soma during global reset</text>
+  <path d="M235 245 V585 H360" class="wire signal"/>
+  <rect x="360" y="535" width="270" height="120" rx="14" class="resetbox"/>
+  <text x="390" y="580" class="label">MN_RST_SW</text>
+  <text x="390" y="615" class="text">Gate = VRESET</text>
+  <text x="390" y="640" class="small">Fast global switch</text>
+  <line x1="630" y1="585" x2="735" y2="585" class="wire" marker-end="url(#blueArrow)"/>
+  <text x="645" y="565" class="label">RST_MID&lt;i&gt;</text>
+  <rect x="735" y="535" width="305" height="120" rx="14" class="resetbox"/>
+  <text x="765" y="580" class="label">MN_RST_LIM</text>
+  <text x="765" y="615" class="text">Gate = VSPIKELEN</text>
+  <text x="765" y="640" class="small">Nominal discharge: 2 uA</text>
+  <line x1="1040" y1="585" x2="1130" y2="585" class="wire"/>
+  <line x1="1130" y1="555" x2="1130" y2="615" class="wire"/><line x1="1142" y1="565" x2="1142" y2="605" class="wire"/><line x1="1154" y1="576" x2="1154" y2="594" class="wire"/>
+  <text x="1180" y="594" class="label">VSS</text>
+
+  <line x1="495" y1="715" x2="495" y2="655" class="wire reset" marker-end="url(#blueArrow)"/>
+  <text x="390" y="750" class="label">VRESET</text><text x="515" y="750" class="small">active high</text>
+  <line x1="890" y1="715" x2="890" y2="655" class="wire bias" marker-end="url(#blueArrow)"/>
+  <text x="785" y="750" class="label">VSPIKELEN</text><text x="965" y="750" class="small">analog bias</text>
+</svg>

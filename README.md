@@ -8,6 +8,7 @@ Cadence Virtuoso implementation of the time-domain winner-take-all integrate-and
 2. [Architecture](docs/02-architecture.md) - cell, shared reset, top-level organization, interfaces, and signal flow.
 3. [Design decisions](docs/03-design-decisions.md) - rationale, alternatives, assumptions, and limitations.
 4. [Final design](docs/04-final-design.md) - transistor-level implementation, Cadence construction sequence, verification, and layout requirements.
+5. [Circuit walkthrough](docs/05-circuit-walkthrough.md) - expanded transistor schematics, naming convention, stage-by-stage operation, and paper-to-GPDK45 mapping.
 
 ## Baseline
 
@@ -20,7 +21,7 @@ Cadence Virtuoso implementation of the time-domain winner-take-all integrate-and
 
 ## Change policy
 
-The current revision is **1.0 (2026-09-17)**. When a parameter changes:
+The current revision is **1.1 (2026-09-17)**. When a parameter changes:
 
 1. Change its source value in `docs/01-calculations.md`.
 2. Recalculate every dependent quantity listed there.
@@ -30,7 +31,7 @@ The current revision is **1.0 (2026-09-17)**. When a parameter changes:
 
 ## Source-paper policy
 
-The IEEE paper is not committed to this repository. Obtain it through an authorized source. This repository contains an original implementation guide and derived engineering calculations, not a copy of the publication.
+The locally supplied IEEE paper is used as a licensed study reference and is excluded from version control. The design documents distinguish the paper's reported 0.6 um circuit from this repository's original 1 V GPDK45 retarget and do not treat the publication as a drop-in fabrication specification.
 
 ## Status
 

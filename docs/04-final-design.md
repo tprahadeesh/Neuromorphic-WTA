@@ -2,9 +2,9 @@
 
 **Design:** GPDK45 time-domain winner-take-all network
 
-**Revision:** 1.0 - 2026-09-17
+**Revision:** 1.1 - 2026-09-17
 
-**Related:** [Calculations](01-calculations.md) | [Architecture](02-architecture.md) | [Decisions](03-design-decisions.md)
+**Related:** [Calculations](01-calculations.md) | [Architecture](02-architecture.md) | [Decisions](03-design-decisions.md) | [Circuit walkthrough](05-circuit-walkthrough.md)
 
 ## 1. Cadence cell hierarchy
 
@@ -37,13 +37,13 @@ Connections are listed as `(D, G, S, B)`.
 
 | Ref. | Device | Connections | Size/value | Function |
 |---|---|---|---:|---|
-| `MN1` | `nmos1v` | `(A1_OUT, VSOMA, VSS, VSS)` | 0.36/0.09 um | First-inverter pull-down |
-| `MP1` | `pmos1v` | `(A1_OUT, VSOMA, VDD, VDD)` | 0.90/0.09 um | First-inverter pull-up |
-| `MN2` | `nmos1v` | `(VSPIKE, A1_OUT, VSS, VSS)` | 0.72/0.06 um | Output-inverter pull-down |
-| `MP2` | `pmos1v` | `(VSPIKE, A1_OUT, VDD, VDD)` | 1.80/0.06 um | Output-inverter pull-up |
-| `M_REQ` | `nmos1v` | `(VRESET_REQ, VSPIKE, VSS, VSS)` | 0.72/0.06 um | Pull request low on spike |
-| `M_RST` | `nmos1v` | `(VSOMA, VRESET, RST_MID, VSS)` | 0.60/0.06 um | Reset switch |
-| `M_LEN` | `nmos1v` | `(RST_MID, VSPIKELEN, VSS, VSS)` | 0.18/0.18 um | Approximately 2 uA discharge limiter |
+| `MN_AMP1` | `nmos1v` | `(A1_OUT, VSOMA, VSS, VSS)` | 0.36/0.09 um | First-inverter pull-down |
+| `MP_AMP1` | `pmos1v` | `(A1_OUT, VSOMA, VDD, VDD)` | 0.90/0.09 um | First-inverter pull-up |
+| `MN_AMP2` | `nmos1v` | `(VSPIKE, A1_OUT, VSS, VSS)` | 0.72/0.06 um | Output-inverter pull-down |
+| `MP_AMP2` | `pmos1v` | `(VSPIKE, A1_OUT, VDD, VDD)` | 1.80/0.06 um | Output-inverter pull-up |
+| `MN_REQ` | `nmos1v` | `(VRESET_REQ, VSPIKE, VSS, VSS)` | 0.72/0.06 um | Pull request low on spike |
+| `MN_RST_SW` | `nmos1v` | `(VSOMA, VRESET, RST_MID, VSS)` | 0.60/0.06 um | Reset switch |
+| `MN_RST_LIM` | `nmos1v` | `(RST_MID, VSPIKELEN, VSS, VSS)` | 0.18/0.18 um | Approximately 2 uA discharge limiter |
 | `C_SOMA` | PDK MIM cap | `(VSOMA, VSS)` | 200 fF | Integrator |
 | `C_FB` | PDK MIM cap | `(VSPIKE, VSOMA)` | 20 fF | Regenerative feedback |
 
@@ -55,12 +55,12 @@ Pins: `VDD`, `VSS`, `VBP_RESETLEN`, `VRESET_REQ`, and `VRESET`.
 
 | Ref. | Device | Connections | Size/value | Function |
 |---|---|---|---:|---|
-| `MP_RL` | `pmos1v` | `(VRESET_REQ, VBP_RESETLEN, VDD, VDD)` | 0.18/0.36 um | Approximately 250 nA weak pull-up |
-| `MN_RI` | `nmos1v` | `(VRESET, VRESET_REQ, VSS, VSS)` | 1.44/0.06 um | Reset-inverter pull-down |
-| `MP_RI` | `pmos1v` | `(VRESET, VRESET_REQ, VDD, VDD)` | 3.60/0.06 um | Reset-inverter pull-up |
+| `MP_REQ_PU` | `pmos1v` | `(VRESET_REQ, VBP_RESETLEN, VDD, VDD)` | 0.18/0.36 um | Approximately 250 nA weak pull-up |
+| `MN_RST_INV` | `nmos1v` | `(VRESET, VRESET_REQ, VSS, VSS)` | 1.44/0.06 um | Reset-inverter pull-down |
+| `MP_RST_INV` | `pmos1v` | `(VRESET, VRESET_REQ, VDD, VDD)` | 3.60/0.06 um | Reset-inverter pull-up |
 | `C_REQ` | PDK MIM cap | `(VRESET_REQ, VSS)` | 70 fF | Reset extension; target 80 fF with parasitics |
 
-During first functional simulation, replace `MP_RL` with an ideal 250 nA current source from `VDD` into `VRESET_REQ`. Restore `MP_RL` before PVT, mismatch, layout, or extraction.
+During first functional simulation, replace `MP_REQ_PU` with an ideal 250 nA current source from `VDD` into `VRESET_REQ`. Restore `MP_REQ_PU` before PVT, mismatch, layout, or extraction.
 
 ## 5. `tdwta4_top` wiring
 
@@ -76,7 +76,7 @@ During first functional simulation, replace `MP_RL` with an ideal 250 nA current
 ## 6. Schematic construction order
 
 1. Read the installed `gpdk045_pdk_referenceManual.pdf` and confirm 1 V devices, MIM capacitor, voltage limits, and layout rules.
-2. Build the first inverter and DC-sweep `VSOMA`. Tune `MP1/MN1` ratio for a nominal 0.49 V trip point.
+2. Build the first inverter and DC-sweep `VSOMA`. Tune the `MP_AMP1/MN_AMP1` ratio for a nominal 0.49 V trip point.
 3. Add the second inverter and verify a clean non-inverting rail-to-rail transition.
 4. Add `CSOMA`, `CFB`, an ideal input current, and ideal reset controls.
 5. Verify integration, one spike, the feedback step, and complete discharge.
@@ -137,7 +137,7 @@ Recommended process corners are TT, FF, SS, FS, and SF. Use `VDD = 0.90, 1.00, 1
 
 ## 10. Final versus calibrated values
 
-Final Revision 1.0 topology and nominal values:
+Final Revision 1.1 topology and nominal values:
 
 - Four signal cells plus one identical timeout cell
 - Two-inverter threshold amplifier
@@ -163,4 +163,5 @@ Do not treat the design as tapeout-ready until every test in Section 8 passes wi
 
 ## Revision notes
 
+- **1.1 - 2026-09-17:** Replaced numeric transistor references with functional names and linked the expanded schematic.
 - **1.0 - 2026-09-17:** Initial transistor-level design and verification specification.

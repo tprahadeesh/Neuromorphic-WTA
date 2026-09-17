@@ -2,9 +2,9 @@
 
 **Design:** GPDK45 time-domain winner-take-all network
 
-**Revision:** 1.0 - 2026-09-17
+**Revision:** 1.1 - 2026-09-17
 
-**Related:** [Calculations](01-calculations.md) | [Decisions](03-design-decisions.md) | [Final design](04-final-design.md)
+**Related:** [Calculations](01-calculations.md) | [Decisions](03-design-decisions.md) | [Final design](04-final-design.md) | [Circuit walkthrough](05-circuit-walkthrough.md)
 
 ## 1. System purpose
 
@@ -48,23 +48,23 @@ IIN  ---------- VSOMA --> INV A1 --> INV A2 --> VSPIKE
                  |                               |
              CSOMA = 200 fF                     gate
                  |                               |
-                VSS                       M_REQ NMOS
+                VSS                       MN_REQ NMOS
                                                  |
 VRESET_REQ --------------------------------------+---- weak pull-up to VDD
 
-VSOMA -- M_RST (gate=VRESET) -- M_LEN (gate=VSPIKELEN) -- VSS
+VSOMA -- MN_RST_SW (gate=VRESET) -- MN_RST_LIM (gate=VSPIKELEN) -- VSS
 ```
 
 Each neuron has four functional blocks:
 
 1. **Integrator:** `IIN`, `CSOMA`, `CFB`, and parasitics form the membrane/soma state.
 2. **Neuromorphic amplifier:** two inverters convert the analog threshold crossing into an all-or-none spike.
-3. **Request transistor:** `M_REQ` pulls the shared active-low request node down when that neuron spikes.
-4. **Reset discharge:** `M_RST` enables the path; `M_LEN` limits its current and controls spike/reset behavior.
+3. **Request transistor:** `MN_REQ` pulls the shared active-low request node down when that neuron spikes.
+4. **Reset discharge:** `MN_RST_SW` enables the path; `MN_RST_LIM` limits its current and controls spike/reset behavior.
 
 ## 4. Shared reset architecture
 
-`VRESET_REQ` is normally high because of a weak 250 nA PMOS pull-up. Every `M_REQ` drain connects to this node, producing a wired-NOR: one or more spikes pull it low. A strong common inverter converts that low level to active-high `VRESET`.
+`VRESET_REQ` is normally high because of the weak 250 nA `MP_REQ_PU` pull-up. Every `MN_REQ` drain connects to this node, producing a wired-NOR: one or more spikes pull it low. The strong `MP_RST_INV/MN_RST_INV` inverter converts that low level to active-high `VRESET`.
 
 When the winning spike falls, the weak pull-up slowly charges `VRESET_REQ`. The intentional 80 fF total node capacitance extends reset long enough for every soma node to fall below 50 mV. This prevents a losing neuron from retaining a head start into the next competition.
 
@@ -81,10 +81,10 @@ sequenceDiagram
     Inputs->>Array: Apply concurrent input currents
     Array->>Array: Soma voltages ramp at I/CTOT
     Winner->>Winner: VSOMA crosses VTRIP
-    Winner->>Request: VSPIKE turns M_REQ on
+    Winner->>Request: VSPIKE turns MN_REQ on
     Request->>Reset: Falling request asserts reset
     Reset->>Array: All soma nodes discharge
-    Winner->>Request: VSPIKE falls; M_REQ releases
+    Winner->>Request: VSPIKE falls; MN_REQ releases
     Request->>Request: Weak pull-up charges node slowly
     Request->>Reset: Reset deasserts after about 167 ns
     Reset->>Array: Next competition begins
@@ -135,4 +135,5 @@ At startup the soma capacitors must be discharged. During schematic verification
 
 ## Revision notes
 
+- **1.1 - 2026-09-17:** Adopted functional transistor names and linked the expanded circuit walkthrough.
 - **1.0 - 2026-09-17:** Four signal neurons, one matched timeout neuron, wired-NOR request, shared reset, and two-inverter threshold amplifier.

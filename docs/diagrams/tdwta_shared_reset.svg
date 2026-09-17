@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600" role="img" aria-labelledby="title desc">
+  <title id="title">Shared request and reset generator</title>
+  <desc id="desc">Clean schematic showing the weak PMOS pull-up, request capacitor, reset inverter, and reset fanout.</desc>
+  <defs><style>
+    .bg{fill:#fff}.box{fill:#f7f4ff;stroke:#6c55a1;stroke-width:3}.wire{fill:none;stroke:#26364a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.req{stroke:#c2511d}.rst{stroke:#2469b2}.bias{stroke:#7450a4}.node{fill:#26364a}
+    .title{font:bold 42px 'DejaVu Sans',Arial,sans-serif;fill:#101828}.subtitle{font:23px 'DejaVu Sans',Arial,sans-serif;fill:#475467}.heading{font:bold 25px 'DejaVu Sans',Arial,sans-serif;fill:#152238}.label{font:bold 22px 'DejaVu Sans Mono',monospace;fill:#172033}.text{font:20px 'DejaVu Sans',Arial,sans-serif;fill:#344054}.small{font:17px 'DejaVu Sans',Arial,sans-serif;fill:#475467}
+  </style><marker id="blueArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12z" fill="#2469b2"/></marker></defs>
+  <rect class="bg" width="1400" height="600"/>
+  <text x="55" y="62" class="title">Shared block: XRESET</text>
+  <text x="55" y="98" class="subtitle">One instance serves every neuron; request assertion is fast and reset release is intentionally slow</text>
+
+  <text x="60" y="175" class="label">VDD</text>
+  <line x1="110" y1="185" x2="110" y2="240" class="wire"/>
+  <rect x="55" y="240" width="270" height="145" rx="14" class="box"/>
+  <text x="80" y="280" class="heading">Weak pull-up</text>
+  <text x="80" y="322" class="label">MP_REQ_PU</text>
+  <text x="80" y="352" class="small">about 250 nA</text>
+  <line x1="25" y1="310" x2="55" y2="310" class="wire bias"/>
+  <text x="55" y="420" class="label">VBP_RESETLEN</text>
+
+  <line x1="325" y1="312" x2="530" y2="312" class="wire req"/>
+  <circle cx="455" cy="312" r="8" class="node"/>
+  <text x="355" y="285" class="label">VRESET_REQ</text>
+  <text x="355" y="350" class="small">active low</text>
+
+  <line x1="455" y1="312" x2="455" y2="405" class="wire req"/>
+  <line x1="420" y1="405" x2="490" y2="405" class="wire"/><line x1="420" y1="425" x2="490" y2="425" class="wire"/>
+  <line x1="455" y1="425" x2="455" y2="485" class="wire"/>
+  <line x1="425" y1="485" x2="485" y2="485" class="wire"/><line x1="435" y1="497" x2="475" y2="497" class="wire"/><line x1="446" y1="509" x2="464" y2="509" class="wire"/>
+  <text x="505" y="425" class="label">C_REQ = 70 fF</text>
+  <text x="505" y="455" class="small">80 fF including parasitics</text>
+
+  <rect x="530" y="215" width="410" height="195" rx="16" class="box"/>
+  <text x="565" y="260" class="heading">Strong reset inverter</text>
+  <text x="565" y="310" class="label">MP_RST_INV</text><text x="770" y="310" class="small">pull-up</text>
+  <text x="565" y="350" class="label">MN_RST_INV</text><text x="770" y="350" class="small">pull-down</text>
+  <text x="565" y="385" class="small">request low -> reset high</text>
+
+  <line x1="940" y1="312" x2="1120" y2="312" class="wire rst" marker-end="url(#blueArrow)"/>
+  <text x="970" y="285" class="label">VRESET</text>
+  <text x="970" y="355" class="small">active high</text>
+  <rect x="1120" y="220" width="225" height="185" rx="14" fill="#eef6ff" stroke="#3979b8" stroke-width="3"/>
+  <text x="1150" y="270" class="heading">Fanout</text>
+  <text x="1150" y="315" class="text">to every</text>
+  <text x="1150" y="350" class="label">MN_RST_SW</text>
+
+  <rect x="55" y="540" width="1290" height="2" fill="#d0d5dd"/>
+  <text x="55" y="575" class="small">Any MN_REQ can pull VRESET_REQ low. MP_REQ_PU and C_REQ determine how long reset remains asserted after the winner releases the request.</text>
+</svg>
